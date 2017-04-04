@@ -1,0 +1,9 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 15px;
+  padding-bottom: 0px;
+}
+.marketing {
+    padding:0px;
+    border:1px solid #021a40;
+}

@@ -1,11 +1,51 @@
 {% extends "layout.html" %}
-
 {% block navbar %}
-<div class="navbar navbar-fixed-top">
-  <!-- ... -->
-</div>
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="/">Accueil</a></li>
+            <li role="presentation"><a href="/infos">Informations pratiques</a></li>
+            <li role="presentation"><a href="/rsvp">Invitations</a></li>
+            <li role="presentation"><a href="/liste">Liste</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Laurent & Virginie</h3>
+      </div>
 {% endblock %}
 
 {% block content %}
-  <h1>Hello, Bootstrap</h1>
-{% endblock %}
+<img src="{{url_for('.static', filename='vl1_2.jpg')}}" alt="Les futurs mariés sur leBrooklyn Bridge." class="img-responsive img-header" align="center">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="page-header"><h2>Informations pratiques</h2></div>
+          <p>Le mariage aura lieu le 10 juin 2017 à la Ferme du Clocher, 182 route de Mons, 6560 Erquelinnes</p>
+          <!-- <p><a class="btn btn-default" href="#" role="button">Plus d'informations &raquo;</a></p> -->
+        </div>
+        <div class="col-md-4">
+          <div class="page-header"><h2>Invitations</h2></div>
+          <p>Afin de nous permettre d'organiser au mieux cette extraordinaire journée, merci de indiquer si vous saurez être des nôtres avant le 01/05/2017.</p>
+          <!-- <p><a class="btn btn-default" href="#" role="button">Répondre &raquo;</a></p> -->
+       </div>
+        <div class="col-md-4">
+          <div class="page-header"><h2>Liste de mariage</h2></div>
+          <p>Si vous désirez nous gâter, toute contribution pour notre futur achat de maison ou pour notre voyage de noces nous comblerait.</p>
+          <!-- <p><a class="btn btn-default" href="#" role="button">Accéder à la liste &raquo;</a></p> -->
+        </div>
+      </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="/infos" role="button">Plus d'informations &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="/rsvp" role="button">Répondre &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="/liste" role="button">Accéder à la liste &raquo;</a></p>
+        </div>
+      </div>
+
+
+{%endblock %}
