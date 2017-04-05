@@ -9,7 +9,8 @@ create table invited (
     ceremony boolean,
     cocktail boolean,
     dinner boolean,
-    party boolean
+    party boolean,
+    babies boolean
 );
 
 drop table if exists replies;
@@ -23,11 +24,12 @@ create table replies (
     cocktail boolean,
     dinner boolean,
     party boolean,
+    babies int,
     comments text,
     filled_in_by text
 );
 
-insert into invited (firstname, name, party_size, commune, ceremony, cocktail, dinner, party) 
-    values ('laurent', 'contzen', 2, 1, 1, 1, 1, 1);
-insert into invited (firstname, name, party_size, commune, ceremony, cocktail, dinner, party)
-    values ('a', 'b', 3, 1, 1, 0, 1, 1);
+insert into invited (firstname, name, party_size, commune, ceremony, cocktail, dinner, party, babies) 
+    values ('laurent', 'contzen', 2, 1, 1, 1, 1, 1, 1);
+insert into invited (firstname, name, party_size, commune, ceremony, cocktail, dinner, party, babies)
+    values ('a', 'b', 3, 0, 1, 1, 0, 1, 0);

@@ -44,7 +44,11 @@
         </div>
       </div>
 {% else %}
-<p>Merci de nous indiquer votre présence à chacune des parties de la journée ainsi que de nous indiquer en commentaires toute allergie/intolérance ou information utile. Si vous venez avec moins de personnes que de lignes, il suffit de laisser la/les ligne(s) supplémentaire(s) vide(s).</p>
+<ul>
+<li>Merci de nous indiquer votre présence à chacune des parties de la journée ainsi que de nous indiquer en commentaires toute allergie/intolérance, régime spécial ou information utile.</li>
+<li>Si vous venez avec moins de personnes que de lignes, il suffit de laisser la/les ligne(s) supplémentaire(s) vide(s).</li>
+<li>Les enfants de plus de 2 ans sont à compléter comme des adultes.</li>
+</ul>
 <form class="form-rsvp" action="{{url_for('show_rsvp')}}" method="post">
     <table class="table table-responsive">
       <thead>
@@ -56,6 +60,7 @@
           {% if session.cocktail %}<th>Coktail</th>{% endif %}
           {% if session.dinner %}<th>Dinner</th>{% endif %}
           {% if session.party %}<th>Soirée</th>{% endif %}
+          {% if session.babies %}<th>Bébés</th>{% endif %}
           <th>Commentaires</th>
       </tr>
   </thead>
@@ -63,17 +68,18 @@
     {% for i in range(session.party_size) %}
     <tr>
         {% if i == 0 %}
-        <td><input type="text" name="firstname_{{i}}" value="{{session.firstname}}" required autofocus></td>
-        <td><input type="text" name="name_{{i}}" value="{{session.name}}" required></td>
+        <td><input type="text" name="firstname_{{i}}" value="{{session.firstname}}" size="10" required autofocus></td>
+        <td><input type="text" name="name_{{i}}" value="{{session.name}}" size="10" required></td>
         {% else %}
-        <td><input type="text" name="firstname_{{i}}"></td>
-        <td><input type="text" name="name_{{i}}"></td>
+        <td><input type="text" name="firstname_{{i}}" size="10"></td>
+        <td><input type="text" name="name_{{i}}" size="10"></td>
         {% endif %}
         {% if session.commune %}<td align="center"><input type="checkbox" name="commune_{{i}}" > </td>{% endif %}
         {% if session.ceremony %}<td align="center"><input type="checkbox" name="ceremony_{{i}}" > </td>{% endif %}
         {% if session.cocktail %}<td align="center"><input type="checkbox" name="cocktail_{{i}}" > </td>{% endif %}
         {% if session.dinner %}<td align="center"><input type="checkbox" name="dinner_{{i}}" > </td>{% endif %}
         {% if session.party %}<td align="center"><input type="checkbox" name="party_{{i}}" > </td>{% endif %}
+        {% if session.babies %}<td align="center"><input type="text" size="1" name="babies_{{i}}" > </td>{% endif %}
         <td><input type="text" name="comments_{{i}}"></td>
     </tr>
     {% endfor %}

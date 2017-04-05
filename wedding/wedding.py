@@ -53,7 +53,6 @@ def initdb_command():
 @app.route('/')
 def show_index():
     session.clear()
-    print('cleared_cache')
     return render_template('index.html')
 
 
@@ -95,16 +94,19 @@ def show_rsvp():
                 r['name'] = replies['name_' + str(i)] if\
                     replies['name_' + str(i)] != '' else replies['name_0']
                 for k in ['commune', 'ceremony', 'cocktail',
-                          'dinner', 'party']:
+                          'dinner', 'party', 'babies']:
                     r[k] = 1 if k+'_'+str(i) in replies.keys() else 0
                 r['comments'] = replies['comments_' + str(i)]
                 q = """insert into replies(firstname, name, commune, ceremony,
-cocktail, dinner, party, comments, filled_in_by) values('%s', '%s', %i, %i,
-%i, %i, %i, '%s', '%s');""" % (r['firstname'].capitalize(),
-                               r['name'].capitalize(), r['commune'],
-                               r['ceremony'], r['cocktail'], r['dinner'],
-                               r['party'], r['comments'],
-                               session['firstname'] + ' ' + session['name'])
+cocktail, dinner, party, babies, comments, filled_in_by) values('%s', '%s',
+%i, %i, %i, %i, %i, %i, '%s', '%s');""" % (r['firstname'].capitalize(),
+                                           r['name'].capitalize(),
+                                           r['commune'], r['ceremony'],
+                                           r['cocktail'], r['dinner'],
+                                           r['party'], r['babies'],
+                                           r['comments'],
+                                           session['firstname'] +
+                                           ' ' + session['name'])
                 c = get_db()
                 c.execute(q)
                 c.commit()
