@@ -1,34 +1,88 @@
 {% extends "layout.html" %}
 {% block navbar %}
-    <div class="container">
-      <div class="header clearfix">
-        <nav>
-          <ul class="nav nav-pills pull-right">
-            <li role="presentation"><a href="/">Accueil</a></li>
-            <li role="presentation"><a href="/infos">Informations pratiques</a></li>
-            <li role="presentation" class="active"><a href="/rsvp">Invitations</a></li>
-            <li role="presentation"><a href="/liste">Liste</a></li>
-          </ul>
-        </nav>
-        <h3 class="text-muted">Laurent & Virginie</h3>
-      </div>
+<div class="container">
+  <div class="header clearfix">
+    <nav>
+      <ul class="nav nav-pills pull-right">
+        <li role="presentation"><a href="/">Accueil</a></li>
+        <li role="presentation"><a href="/infos">Informations pratiques</a></li>
+        <li role="presentation" class="active"><a href="/rsvp">Invitations</a></li>
+        <li role="presentation"><a href="/liste">Liste</a></li>
+    </ul>
+</nav>
+<h3 class="text-muted">Laurent & Virginie</h3>
+</div>
 {% endblock %}
 
-  {% block content %}
-  <div class="page-header">
+{% block content %}
+<div class="page-header">
     <h1>RSVP</h1>
-  </div>
-  <div class="container">
+</div>
+<div class="container">
+{% if not session.logged_in %}
+  {% if error %}
+    <div class="alert alert-danger" role="alert">
+        <p><strong>Error:</strong> {{ error }}</p>
+    </div>
+  {% endif %}
+  <form class="form-signin" action="{{url_for('show_rsvp')}}" method="post">
+    <h3 class="form-signin-heading">Merci d'entrer votre prénom et nom pour continuer</h3>
+    <label for="firstname" class="sr-only">Prénom</label>
+    <input type="text" name="firstname" class="form-control" placeholder="Prénom" required autofocus>
+    <label for="name" class="sr-only">Nom</label>
+    <input type="text" name="name" class="form-control" placeholder="Nom" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Continuer</button>
+</form>
+{% elif session.submitted %}
+    <div class="alert alert-success" role="alert">
+        <p><strong>Merci!</strong> Votre réponse a bien été prise en compte.</p>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="/" role="button">Retour à l'accueil &raquo;</a></p>
+        </div>
+      </div>
+{% else %}
+<p>Merci de nous indiquer votre présence à chacune des parties de la journée ainsi que de nous indiquer en commentaires toute allergie/intolérance ou information utile. Si vous venez avec moins de personnes que de lignes, il suffit de laisser la/les ligne(s) supplémentaire(s) vide(s).</p>
+<form class="form-rsvp" action="{{url_for('show_rsvp')}}" method="post">
+    <table class="table table-responsive">
+      <thead>
+        <tr>
+          <th>Prénom</th>
+          <th>Nom</th>
+          {% if session.commune %}<th>Commune</th>{% endif %}
+          {% if session.ceremony %}<th>Cérémonie</th>{% endif %}
+          {% if session.cocktail %}<th>Coktail</th>{% endif %}
+          {% if session.dinner %}<th>Dinner</th>{% endif %}
+          {% if session.party %}<th>Soirée</th>{% endif %}
+          <th>Commentaires</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for i in range(session.party_size) %}
+    <tr>
+        {% if i == 0 %}
+        <td><input type="text" name="firstname_{{i}}" value="{{session.firstname}}" required autofocus></td>
+        <td><input type="text" name="name_{{i}}" value="{{session.name}}" required></td>
+        {% else %}
+        <td><input type="text" name="firstname_{{i}}"></td>
+        <td><input type="text" name="name_{{i}}"></td>
+        {% endif %}
+        {% if session.commune %}<td align="center"><input type="checkbox" name="commune_{{i}}" > </td>{% endif %}
+        {% if session.ceremony %}<td align="center"><input type="checkbox" name="ceremony_{{i}}" > </td>{% endif %}
+        {% if session.cocktail %}<td align="center"><input type="checkbox" name="cocktail_{{i}}" > </td>{% endif %}
+        {% if session.dinner %}<td align="center"><input type="checkbox" name="dinner_{{i}}" > </td>{% endif %}
+        {% if session.party %}<td align="center"><input type="checkbox" name="party_{{i}}" > </td>{% endif %}
+        <td><input type="text" name="comments_{{i}}"></td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Envoyer</button>
+</form>
+{% endif %}
 
-    <form class="form-signin">
-    <h3 class="form-signin-heading">Merci d'entrer votre prénom et nom pour commencer</h3>
-      <label for="inputSurname" class="sr-only">Prénom</label>
-      <input type="text" id="inputSurname" class="form-control" placeholder="Prénom" required autofocus>
-      <label for="inputName" class="sr-only">Nom</label>
-      <input type="text" id="inputName" class="form-control" placeholder="Nom" required>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Continuer</button>
-    </form>
-
-  </div> <!-- /container -->
+</div> <!-- /container -->
 </div>
 {%endblock %}

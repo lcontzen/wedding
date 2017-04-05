@@ -1,2 +1,3 @@
 venv/
 wedding/__pycache__/
+wedding/wedding.db

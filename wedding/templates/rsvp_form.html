@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block navbar %}
+<div class="container">
+  <div class="header clearfix">
+    <nav>
+      <ul class="nav nav-pills pull-right">
+        <li role="presentation"><a href="/">Accueil</a></li>
+        <li role="presentation"><a href="/infos">Informations pratiques</a></li>
+        <li role="presentation" class="active"><a href="/rsvp">Invitations</a></li>
+        <li role="presentation"><a href="#">Liste</a></li>
+      </ul>
+    </nav>
+    <h3 class="text-muted">Laurent & Virginie</h3>
+  </div>
+  {% endblock %}
+
+  {% block content %}
+  {% if not session.logged_in %}
+  <a href="{{ url_for('rsvp') }}">log in</a>
+  {% else %}
+  <div class="page-header">
+    <h1>RSVP</h1>
+  </div>
+  <form class="form-rsvp" action="{{url_for('validate_rsvp')}}" method="post">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Prénom</th>
+          <th>Nom</th>
+          <th>Cérémonie</th>
+          <th>Coktail</th>
+          <th>Dinner</th>
+          <th>Soirée</th>
+          <th>Commentaires</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in rows %}
+        <tr>
+        <td>{{i}}</td>
+        {% if i == 1 %}
+          <td><input type="text" name="surname" value="{{surname}}" required autofocus></td>
+          <td><input type="text" name="name" value="{{session.name}}" required></td>
+        {% else %}
+          <td><input type="text" name="surname" required autofocus></td>
+          <td><input type="text" name="name" required></td>
+        {% endif %}
+          <td align="center"><input type="checkbox" name="ceremony" required> </td>
+          <td align="center"><input type="checkbox" name="cocktail" required> </td>
+          <td align="center"><input type="checkbox" name="dinner" required> </td>
+          <td align="center"><input type="checkbox" name="party" required> </td>
+          <td><input type="text" name="comments"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+
+  {% endif %}
+
+  {% endblock %}
