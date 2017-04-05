@@ -1,5 +1,5 @@
 import os
-import sqlite3
+import datetime
 from flask import Flask, request, abort, session, g, redirect, url_for, \
                   render_template, flash
 from flask_bootstrap import Bootstrap
@@ -10,13 +10,10 @@ app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(__name__)
 app.config.update(dict(
-    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'wedding.db'),
+    SQLALCHEMY_DATABASE_URI='sqlite:///' +
+                            os.path.join(app.root_path, 'wedding.db'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SECRET_KEY='devkeyfixme',
-    USERNAME='admin',
-    PASSWORD='devpasswdfixme',
-    FIRSTNAME='laurent',
-    NAME='contzen',
     ))
 app.config.from_envvar('WEDDING_SETTINGS', silent=True)
 db = SQLAlchemy(app)
@@ -50,22 +47,40 @@ class Invited(db.Model):
         return '<Invited %s %s>' % (self.firstname, self.name)
 
 
-def connect_db():
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
+class Replies(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(50))
+    name = db.Column(db.String(50))
+    commune = db.Column(db.Boolean)
+    ceremony = db.Column(db.Boolean)
+    cocktail = db.Column(db.Boolean)
+    dinner = db.Column(db.Boolean)
+    party = db.Column(db.Boolean)
+    babies = db.Column(db.Integer)
+    comments = db.Column(db.Text)
+    filled_in_by = db.Column(db.String(100))
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.now)
 
+    def __init__(self, firstname, name, commune, ceremony, cocktail, dinner,
+                 party, babies, comments, filled_in_by):
+        self.firstname = firstname
+        self.name = name
+        self.commune = commune
+        self.ceremony = ceremony
+        self.cocktail = cocktail
+        self.dinner = dinner
+        self.party = party
+        self.babies = babies
+        self.comments = comments
+        self.filled_in_by = filled_in_by
 
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
+    def __repr__(self):
+        return '<Reply %s %s %s>' % (self.firstname, self.name, self.timestamp)
 
 
 @app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
+def shutdown_session(exception=None):
+    db.session.remove()
 
 
 def init_db():
@@ -100,49 +115,52 @@ def show_rsvp():
     error = None
     if not session.get('logged_in'):  # Login part of page
         if request.method == 'POST':
-            db = get_db()
-            q = """ select *
-            from invited
-            where firstname = '%s' and name = '%s';"""\
-            % (request.form['firstname'].lower(), request.form['name'].lower())
-            r = db.execute(q).fetchone()
-            if r:
-                session['firstname'] = request.form['firstname'].capitalize()
-                session['name'] = request.form['name'].capitalize()
-                for k in r.keys():
-                    session[k] = r[k]
+            r_fn = request.form['firstname'].lower()
+            r_n = request.form['name'].lower()
+            user = Invited.query.filter_by(firstname=r_fn, name=r_n).first()
+            if user:
+                session['firstname'] = r_fn.capitalize()
+                session['name'] = r_n.capitalize()
+                session['party_size'] = user.party_size
+                session['commune'] = user.commune
+                session['ceremony'] = user.ceremony
+                session['cocktail'] = user.cocktail
+                session['dinner'] = user.dinner
+                session['party'] = user.party
+                session['babies'] = user.babies
                 session['logged_in'] = True
                 return redirect(url_for('show_rsvp'))
             else:
                 error = "Nom ou prénom erroné. Veuillez réessayer."
         return render_template('rsvp.html', error=error)
-    elif request.method == 'POST':  # Thanks par of page
+    elif request.method == 'POST':  # Thanks part of page
         session['submitted'] = True
+        session['added'] = 0
         for i in range(session['party_size']):
             replies = request.form
             if replies['firstname_' + str(i)] != '' or \
                replies['name_' + str(i)] != '':
                 r = {}
-                r['firstname'] = replies['firstname_' + str(i)]
+                r['firstname'] = replies['firstname_' + str(i)] if\
+                    replies['firstname_' + str(i)] != '' else\
+                    replies['firstname_0']
                 r['name'] = replies['name_' + str(i)] if\
                     replies['name_' + str(i)] != '' else replies['name_0']
                 for k in ['commune', 'ceremony', 'cocktail',
                           'dinner', 'party', 'babies']:
-                    r[k] = 1 if k+'_'+str(i) in replies.keys() else 0
+                    r[k] = True if k+'_'+str(i) in replies.keys() else False
                 r['comments'] = replies['comments_' + str(i)]
-                q = """insert into replies(firstname, name, commune, ceremony,
-cocktail, dinner, party, babies, comments, filled_in_by) values('%s', '%s',
-%i, %i, %i, %i, %i, %i, '%s', '%s');""" % (r['firstname'].capitalize(),
-                                           r['name'].capitalize(),
-                                           r['commune'], r['ceremony'],
-                                           r['cocktail'], r['dinner'],
-                                           r['party'], r['babies'],
-                                           r['comments'],
-                                           session['firstname'] +
-                                           ' ' + session['name'])
-                c = get_db()
-                c.execute(q)
-                c.commit()
+
+                db.session.add(Replies(r['firstname'].capitalize(),
+                                       r['name'].capitalize(),
+                                       r['commune'], r['ceremony'],
+                                       r['cocktail'], r['dinner'],
+                                       r['party'], r['babies'],
+                                       r['comments'],
+                                       session['firstname'] +
+                                       ' ' + session['name']))
+                db.session.commit()
+                session['added'] += 1
         return render_template('rsvp.html')
     else:  # Form
         return render_template('rsvp.html')
