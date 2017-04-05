@@ -3,13 +3,15 @@ import sqlite3
 from flask import Flask, request, abort, session, g, redirect, url_for, \
                   render_template, flash
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(__name__)
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'wedding.db'),
+    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'wedding.db'),
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SECRET_KEY='devkeyfixme',
     USERNAME='admin',
     PASSWORD='devpasswdfixme',
@@ -17,6 +19,35 @@ app.config.update(dict(
     NAME='contzen',
     ))
 app.config.from_envvar('WEDDING_SETTINGS', silent=True)
+db = SQLAlchemy(app)
+
+
+class Invited(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(50))
+    name = db.Column(db.String(50))
+    party_size = db.Column(db.Integer)
+    commune = db.Column(db.Boolean)
+    ceremony = db.Column(db.Boolean)
+    cocktail = db.Column(db.Boolean)
+    dinner = db.Column(db.Boolean)
+    party = db.Column(db.Boolean)
+    babies = db.Column(db.Boolean)
+
+    def __init__(self, firstname, name, party_size, commune, ceremony,
+                 cocktail, dinner, party, babies):
+        self.firstname = firstname
+        self.name = name
+        self.party_size = party_size
+        self.commune = commune
+        self.ceremony = ceremony
+        self.cocktail = cocktail
+        self.dinner = dinner
+        self.party = party
+        self.babies = babies
+
+    def __repr__(self):
+        return '<Invited %s %s>' % (self.firstname, self.name)
 
 
 def connect_db():
@@ -38,10 +69,12 @@ def close_db(error):
 
 
 def init_db():
-    db = get_db()
-    with app.open_resource('schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
+    db.drop_all()
+    db.create_all()
+    db.session.add(Invited('laurent', 'contzen', 2, True, True, True, True,
+                           True, True))
+    db.session.add(Invited('a', 'b', 3, False, True, True, False, True, False))
+    db.session.commit()
 
 
 @app.cli.command('initdb')
