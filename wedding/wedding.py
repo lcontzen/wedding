@@ -181,3 +181,7 @@ def show_rsvp():
 def show_list():
     session.clear()
     return render_template('liste.html')
+
+
+if __name__ == "__main__":
+    app.run()
