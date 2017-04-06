@@ -80,7 +80,7 @@ class Replies(db.Model):
 
 def cleanup_name(name):
     for k, v in {'é': 'e', 'è': 'e', 'ö': 'o', 'ê': 'e',
-                 'à': 'a', "'": ""}.items():
+                 'à': 'a', "'": "", " ": "", "ï": "i"}.items():
         name = name.replace(k, v)
     return name
 
