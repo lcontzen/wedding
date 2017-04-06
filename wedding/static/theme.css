@@ -19,6 +19,8 @@ body {
 
 .img-header {
    border:1px solid #021a40;
+   display: block;
+   margin: 0 auto;
 }
 
 .iframe-container{

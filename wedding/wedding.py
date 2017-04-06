@@ -78,6 +78,13 @@ class Replies(db.Model):
         return '<Reply %s %s %s>' % (self.firstname, self.name, self.timestamp)
 
 
+def cleanup_name(name):
+    for k, v in {'é': 'e', 'è': 'e', 'ö': 'o', 'ê': 'e',
+                 'à': 'a', "'": ""}.items():
+        name = name.replace(k, v)
+    return name
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
@@ -89,6 +96,8 @@ def init_db():
     db.session.add(Invited('laurent', 'contzen', 2, True, True, True, True,
                            True, True))
     db.session.add(Invited('a', 'b', 3, False, True, True, False, True, False))
+    db.session.add(Invited('veronique', 'c', 12, True, True, True, True, True,
+                           True))
     db.session.commit()
 
 
@@ -115,8 +124,10 @@ def show_rsvp():
     error = None
     if not session.get('logged_in'):  # Login part of page
         if request.method == 'POST':
-            r_fn = request.form['firstname'].lower()
-            r_n = request.form['name'].lower()
+            r_fn = cleanup_name(request.form['firstname'].lower())
+            r_n = cleanup_name(request.form['name'].lower())
+            print(r_fn)
+            print(r_n)
             user = Invited.query.filter_by(firstname=r_fn, name=r_n).first()
             if user:
                 session['firstname'] = r_fn.capitalize()
