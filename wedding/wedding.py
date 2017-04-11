@@ -1,5 +1,6 @@
 import os
 import datetime
+import unicodedata
 from flask import Flask, request, abort, session, g, redirect, url_for, \
                   render_template, flash
 from flask_bootstrap import Bootstrap
@@ -79,10 +80,10 @@ class Replies(db.Model):
 
 
 def cleanup_name(name):
-    for k, v in {'é': 'e', 'è': 'e', 'ö': 'o', 'ê': 'e',
-                 'à': 'a', "'": "", " ": "", "ï": "i"}.items():
-        name = name.replace(k, v)
-    return name
+    name = ''.join(c for c in unicodedata.normalize('NFD', name)
+                   if unicodedata.category(c) != 'Mn')
+    name = name.replace('-', '').replace(' ', '')
+    return name.lower()
 
 
 @app.teardown_appcontext
@@ -124,8 +125,8 @@ def show_rsvp():
     error = None
     if not session.get('logged_in'):  # Login part of page
         if request.method == 'POST':
-            r_fn = cleanup_name(request.form['firstname'].lower())
-            r_n = cleanup_name(request.form['name'].lower())
+            r_fn = cleanup_name(request.form['firstname'])
+            r_n = cleanup_name(request.form['name'])
             print(r_fn)
             print(r_n)
             user = Invited.query.filter_by(firstname=r_fn, name=r_n).first()
