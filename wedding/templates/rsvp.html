@@ -7,7 +7,7 @@
         <li role="presentation"><a href="/">Accueil</a></li>
         <li role="presentation"><a href="/infos">Informations pratiques</a></li>
         <li role="presentation" class="active"><a href="/rsvp">Invitations</a></li>
-        <li role="presentation"><a href="/liste">Liste</a></li>
+        <li role="presentation"><a href="/liste">Cadeaux</a></li>
     </ul>
 </nav>
 <h3 class="text-muted">Laurent & Virginie</h3>
@@ -35,7 +35,8 @@
 </form>
 {% elif session.submitted %}
     <div class="alert alert-success" role="alert">
-        <p><strong>Merci!</strong> Votre réponse a bien été prise en compte. Vous avez répondu pour <b>{{session.added}}</b> personnes.</p>
+        <p>Vous avez répondu pour <b>{{session.added}}</b> personne(s).</p>
+        <p>Merci beaucoup! Votre présence nous fera très plaisir. <br> Laurent & Virginie </p>
     </div>
     <div class="container">
       <div class="row">
@@ -44,24 +45,20 @@
         </div>
       </div>
 {% else %}
-<ul>
-<li>Merci de nous indiquer votre présence à chacune des parties de la journée ainsi que de nous indiquer en commentaires toute allergie/intolérance, régime spécial ou information utile.</li>
-<li>Si vous venez avec moins de personnes que de lignes, il suffit de laisser la/les ligne(s) supplémentaire(s) vide(s).</li>
-<li>Les enfants de plus de 2 ans sont à compléter comme des adultes.</li>
-</ul>
 <form class="form-rsvp" action="{{url_for('show_rsvp')}}" method="post">
     <table class="table table-responsive">
       <thead>
         <tr>
-          <th>Prénom</th>
-          <th>Nom</th>
-          {% if session.commune %}<th>Commune</th>{% endif %}
-          {% if session.ceremony %}<th>Cérémonie</th>{% endif %}
-          {% if session.cocktail %}<th>Coktail</th>{% endif %}
-          {% if session.dinner %}<th>Dinner</th>{% endif %}
-          {% if session.party %}<th>Soirée</th>{% endif %}
-          {% if session.babies %}<th>Bébés</th>{% endif %}
-          <th>Commentaires</th>
+          <th><div>Prénom</div> <div></div></th>
+          <th>Nom <br>   </th>
+          {% if session.commune %}<th>Commune <br> 03 Juin</th>{% endif %}
+          {% if session.ceremony %}<th>Cérémonie <br> 10 Juin</th>{% endif %}
+          {% if session.cocktail %}<th>Coktail <br> 10 Juin</th>{% endif %}
+          {% if session.dinner %}<th>Dîner <br> 10 Juin</th>{% endif %}
+          {% if session.party %}<th>Soirée <br> 10 Juin</th>{% endif %}
+<!--           {% if session.babies %}<th>Bébés</th>{% endif %} -->
+          <th>Commentaires{% if session.dinner %},<br>Alergies,<br>Régimes alimentaires{% endif %}</th>
+          <th>Désolé(e),<br>je ne pourrai pas<br>être présent(e)</th>
       </tr>
   </thead>
   <tbody>
@@ -79,8 +76,9 @@
         {% if session.cocktail %}<td align="center"><input type="checkbox" name="cocktail_{{i}}" > </td>{% endif %}
         {% if session.dinner %}<td align="center"><input type="checkbox" name="dinner_{{i}}" > </td>{% endif %}
         {% if session.party %}<td align="center"><input type="checkbox" name="party_{{i}}" > </td>{% endif %}
-        {% if session.babies %}<td align="center"><input type="text" size="1" name="babies_{{i}}" > </td>{% endif %}
+<!--         {% if session.babies %}<td align="center"><input type="text" size="1" name="babies_{{i}}" > </td>{% endif %} -->
         <td><input type="text" name="comments_{{i}}"></td>
+        <td align="center"><input type="checkbox" name="unavailable_{{i}}" > </td>
     </tr>
     {% endfor %}
 </tbody>

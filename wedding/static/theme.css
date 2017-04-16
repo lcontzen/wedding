@@ -79,3 +79,7 @@ body {
 .table {
     max-width: inherit;
 }
+
+.th {
+    vertical-align: top;
+}

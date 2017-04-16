@@ -31,6 +31,7 @@ class Invited(db.Model):
     dinner = db.Column(db.Boolean)
     party = db.Column(db.Boolean)
     babies = db.Column(db.Boolean)
+    # related = db.Column(db.String(150))
 
     def __init__(self, firstname, name, party_size, commune, ceremony,
                  cocktail, dinner, party, babies):
@@ -43,6 +44,7 @@ class Invited(db.Model):
         self.dinner = dinner
         self.party = party
         self.babies = babies
+        # self.related = related
 
     def __repr__(self):
         return '<Invited %s %s>' % (self.firstname, self.name)
@@ -61,9 +63,10 @@ class Replies(db.Model):
     comments = db.Column(db.Text)
     filled_in_by = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, default=datetime.datetime.now)
+    unavailable = db.Column(db.Boolean)
 
     def __init__(self, firstname, name, commune, ceremony, cocktail, dinner,
-                 party, babies, comments, filled_in_by):
+                 party, babies, comments, filled_in_by, unavailable):
         self.firstname = firstname
         self.name = name
         self.commune = commune
@@ -74,6 +77,7 @@ class Replies(db.Model):
         self.babies = babies
         self.comments = comments
         self.filled_in_by = filled_in_by
+        self.unavailable = unavailable
 
     def __repr__(self):
         return '<Reply %s %s %s>' % (self.firstname, self.name, self.timestamp)
