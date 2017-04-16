@@ -45,6 +45,9 @@
         </div>
       </div>
 {% else %}
+<div class="alert alert-info" role="alert">
+        <strong>Attention:</strong> Pourriez-vous compléter pour les enfants également? Merci!
+      </div>
 <form class="form-rsvp" action="{{url_for('show_rsvp')}}" method="post">
     <table class="table table-responsive">
       <thead>
