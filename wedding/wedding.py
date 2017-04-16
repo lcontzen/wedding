@@ -103,6 +103,8 @@ def init_db():
     db.session.add(Invited('a', 'b', 3, False, True, True, False, True, False))
     db.session.add(Invited('veronique', 'c', 12, True, True, True, True, True,
                            True))
+    db.session.add(Invited('virginie', 'scheffer', 2, True, True, True, True,
+                           True, True))
     db.session.commit()
 
 
@@ -163,7 +165,7 @@ def show_rsvp():
                 r['name'] = replies['name_' + str(i)] if\
                     replies['name_' + str(i)] != '' else replies['name_0']
                 for k in ['commune', 'ceremony', 'cocktail',
-                          'dinner', 'party', 'babies']:
+                          'dinner', 'party', 'babies', 'unavailable']:
                     r[k] = True if k+'_'+str(i) in replies.keys() else False
                 r['comments'] = replies['comments_' + str(i)]
 
@@ -174,7 +176,8 @@ def show_rsvp():
                                        r['party'], r['babies'],
                                        r['comments'],
                                        session['firstname'] +
-                                       ' ' + session['name']))
+                                       ' ' + session['name'],
+                                       r['unavailable']))
                 db.session.commit()
                 session['added'] += 1
         return render_template('rsvp.html')
