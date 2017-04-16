@@ -30,11 +30,9 @@ class Invited(db.Model):
     cocktail = db.Column(db.Boolean)
     dinner = db.Column(db.Boolean)
     party = db.Column(db.Boolean)
-    babies = db.Column(db.Boolean)
-    # related = db.Column(db.String(150))
 
     def __init__(self, firstname, name, party_size, commune, ceremony,
-                 cocktail, dinner, party, babies):
+                 cocktail, dinner, party):
         self.firstname = firstname
         self.name = name
         self.party_size = party_size
@@ -43,8 +41,6 @@ class Invited(db.Model):
         self.cocktail = cocktail
         self.dinner = dinner
         self.party = party
-        self.babies = babies
-        # self.related = related
 
     def __repr__(self):
         return '<Invited %s %s>' % (self.firstname, self.name)
@@ -59,14 +55,13 @@ class Replies(db.Model):
     cocktail = db.Column(db.Boolean)
     dinner = db.Column(db.Boolean)
     party = db.Column(db.Boolean)
-    babies = db.Column(db.Integer)
     comments = db.Column(db.Text)
     filled_in_by = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, default=datetime.datetime.now)
     unavailable = db.Column(db.Boolean)
 
     def __init__(self, firstname, name, commune, ceremony, cocktail, dinner,
-                 party, babies, comments, filled_in_by, unavailable):
+                 party, comments, filled_in_by, unavailable):
         self.firstname = firstname
         self.name = name
         self.commune = commune
@@ -74,7 +69,6 @@ class Replies(db.Model):
         self.cocktail = cocktail
         self.dinner = dinner
         self.party = party
-        self.babies = babies
         self.comments = comments
         self.filled_in_by = filled_in_by
         self.unavailable = unavailable
@@ -99,12 +93,11 @@ def init_db():
     db.drop_all()
     db.create_all()
     db.session.add(Invited('laurent', 'contzen', 2, True, True, True, True,
-                           True, True))
-    db.session.add(Invited('a', 'b', 3, False, True, True, False, True, False))
-    db.session.add(Invited('veronique', 'c', 12, True, True, True, True, True,
                            True))
+    db.session.add(Invited('a', 'b', 3, False, True, True, False, True))
+    db.session.add(Invited('veronique', 'c', 12, True, True, True, True, True))
     db.session.add(Invited('virginie', 'scheffer', 2, True, True, True, True,
-                           True, True))
+                           True))
     db.session.commit()
 
 
@@ -145,7 +138,6 @@ def show_rsvp():
                 session['cocktail'] = user.cocktail
                 session['dinner'] = user.dinner
                 session['party'] = user.party
-                session['babies'] = user.babies
                 session['logged_in'] = True
                 return redirect(url_for('show_rsvp'))
             else:
@@ -165,7 +157,7 @@ def show_rsvp():
                 r['name'] = replies['name_' + str(i)] if\
                     replies['name_' + str(i)] != '' else replies['name_0']
                 for k in ['commune', 'ceremony', 'cocktail',
-                          'dinner', 'party', 'babies', 'unavailable']:
+                          'dinner', 'party', 'unavailable']:
                     r[k] = True if k+'_'+str(i) in replies.keys() else False
                 r['comments'] = replies['comments_' + str(i)]
 
@@ -173,8 +165,7 @@ def show_rsvp():
                                        r['name'].capitalize(),
                                        r['commune'], r['ceremony'],
                                        r['cocktail'], r['dinner'],
-                                       r['party'], r['babies'],
-                                       r['comments'],
+                                       r['party'], r['comments'],
                                        session['firstname'] +
                                        ' ' + session['name'],
                                        r['unavailable']))

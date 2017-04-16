@@ -56,7 +56,6 @@
           {% if session.cocktail %}<th>Coktail <br> 10 Juin</th>{% endif %}
           {% if session.dinner %}<th>Dîner <br> 10 Juin</th>{% endif %}
           {% if session.party %}<th>Soirée <br> 10 Juin</th>{% endif %}
-<!--           {% if session.babies %}<th>Bébés</th>{% endif %} -->
           <th>Commentaires{% if session.dinner %},<br>Alergies,<br>Régimes alimentaires{% endif %}</th>
           <th>Désolé(e),<br>je ne pourrai pas<br>être présent(e)</th>
       </tr>
@@ -76,7 +75,6 @@
         {% if session.cocktail %}<td align="center"><input type="checkbox" name="cocktail_{{i}}" > </td>{% endif %}
         {% if session.dinner %}<td align="center"><input type="checkbox" name="dinner_{{i}}" > </td>{% endif %}
         {% if session.party %}<td align="center"><input type="checkbox" name="party_{{i}}" > </td>{% endif %}
-<!--         {% if session.babies %}<td align="center"><input type="text" size="1" name="babies_{{i}}" > </td>{% endif %} -->
         <td><input type="text" name="comments_{{i}}"></td>
         <td align="center"><input type="checkbox" name="unavailable_{{i}}" > </td>
     </tr>
