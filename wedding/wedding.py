@@ -92,12 +92,6 @@ def shutdown_session(exception=None):
 def init_db():
     db.drop_all()
     db.create_all()
-    db.session.add(Invited('laurent', 'contzen', 2, True, True, True, True,
-                           True))
-    db.session.add(Invited('a', 'b', 3, False, True, True, False, True))
-    db.session.add(Invited('veronique', 'c', 12, True, True, True, True, True))
-    db.session.add(Invited('virginie', 'scheffer', 2, True, True, True, True,
-                           True))
     db.session.commit()
 
 
