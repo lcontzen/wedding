@@ -1,6 +1,7 @@
 import os
 import datetime
 import unicodedata
+import logging
 from flask import Flask, request, abort, session, g, redirect, url_for, \
                   render_template, flash
 from flask_bootstrap import Bootstrap
@@ -18,6 +19,11 @@ app.config.update(dict(
     ))
 app.config.from_envvar('WEDDING_SETTINGS', silent=True)
 db = SQLAlchemy(app)
+logging.basicConfig(filename='wedding/wedding.log',
+                    level=logging.INFO,
+                    format='%(asctime)s|%(levelname)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+logging.info("App started")
 
 
 class Invited(db.Model):
@@ -120,10 +126,9 @@ def show_rsvp():
         if request.method == 'POST':
             r_fn = cleanup_name(request.form['firstname'])
             r_n = cleanup_name(request.form['name'])
-            print(r_fn)
-            print(r_n)
             user = Invited.query.filter_by(firstname=r_fn, name=r_n).first()
             if user:
+                logging.warning('%s %s successfully logged in.' % (r_fn, r_n))
                 session['firstname'] = r_fn.capitalize()
                 session['name'] = r_n.capitalize()
                 session['party_size'] = user.party_size
@@ -136,6 +141,7 @@ def show_rsvp():
                 return redirect(url_for('show_rsvp'))
             else:
                 error = "Nom ou prénom erroné. Veuillez réessayer."
+                logging.error('%s %s failed to log in.' % (r_fn, r_n))
         return render_template('rsvp.html', error=error)
     elif request.method == 'POST':  # Thanks part of page
         session['submitted'] = True
@@ -165,6 +171,10 @@ def show_rsvp():
                                        r['unavailable']))
                 db.session.commit()
                 session['added'] += 1
+        logging.warning('%s %s successfully replied for %s persons' %
+                        (replies['firstname_0'],
+                         replies['name_0'],
+                         session['added']))
         return render_template('rsvp.html')
     else:  # Form
         return render_template('rsvp.html')
