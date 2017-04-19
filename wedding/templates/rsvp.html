@@ -22,7 +22,7 @@
 {% if not session.logged_in %}
   {% if error %}
     <div class="alert alert-danger" role="alert">
-        <p><strong>Error:</strong> {{ error }}</p>
+        <p><strong>Erreur:</strong> {{ error }} <br>N'hésitez pas à nous contacter en cas de problème.</p>
     </div>
   {% endif %}
   <form class="form-signin" action="{{url_for('show_rsvp')}}" method="post">
