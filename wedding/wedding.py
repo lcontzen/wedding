@@ -23,7 +23,7 @@ logging.basicConfig(filename='wedding/wedding.log',
                     level=logging.INFO,
                     format='%(asctime)s|%(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
-logging.info("App started")
+logging.warning("App started")
 
 
 class Invited(db.Model):
