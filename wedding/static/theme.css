@@ -109,3 +109,7 @@ body {
 .cntr {
   text-align: center;
 }
+
+.text-muted {
+  color: #8a7d62;
+}
