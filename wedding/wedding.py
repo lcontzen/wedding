@@ -99,6 +99,7 @@ def init_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+    logging.critical("flask initdb has been run.")
 
 
 @app.cli.command('initdb')
